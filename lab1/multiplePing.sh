@@ -9,7 +9,7 @@ for i in ${!targets[@]}; do
     s="test$i.txt"
     #s="ping[${targets[$i]}].txt"
     echo "ping to ${targets[$i]} -> results in the file $s"
-    ping -c 10 ${targets[$i]} > ./resultsPing/$s &
+    ping -c 10 -D ${targets[$i]} > ./resultsPing/$s &
 done
 
 wait $! # wait until the last process created has finished

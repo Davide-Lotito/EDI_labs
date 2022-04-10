@@ -1,3 +1,4 @@
+from datetime import datetime
 import json ##to work with json
 import os ##to use bash command
 import re ##to work with regex
@@ -5,40 +6,52 @@ import re ##to work with regex
 # get only three useful lines 
 def getLines(Lines):
     count = 0
+    regTimeStamp = "\[+[0-9]+\.+[0-9]+\]"
     for line in Lines:
+        z = re.search(regTimeStamp,line)
         count += 1
         if "PING" in line.strip():
             head = line.strip()
+            continue
+        if z:
+            # print(z[0])
+            timeStamp = z[0]
+            continue
         if "packets" in line.strip():
             packets = line.strip()
         if "rtt min/avg/max/mdev" in line.strip():
             rtt = line.strip()
-    return head, packets, rtt
+    return head, packets, rtt, timeStamp
 
 # open each file and work on it
 def getData(head, packets, rtt):
     # useful regex
-    regIP = "[0-9]+\.+[0-9]+\.+[0-9]+\.+[0-9]"
+    regIP = "[0-9]+\.+[0-9]+\.+[0-9]+\.+[0-9]+"
     regPacketLost = "[0-9]+\%"
-    regTime = "\s+[0-9]+ms"
+    regExcTime = "\s+[0-9]+ms"
     regRTT = "[0-9]+\.+[0-9]+"
 
     # search useful data
     destination = re.search(regIP, head)[0] #IP address
     packetLost = re.search(regPacketLost, packets)[0]
-    time = re.search(regTime, packets)[0] #time value from ping command
+    excTime = re.search(regExcTime, packets)[0] #time value from ping command
     minRTT = re.findall(regRTT, rtt)[0]
     avgRTT = re.findall(regRTT, rtt)[1]
     maxRTT = re.findall(regRTT, rtt)[2]
     devRTT = re.findall(regRTT, rtt)[3]
-    return destination, packetLost, time, minRTT, avgRTT, maxRTT, devRTT
+    return destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT
 
-def writeJson(destination, packetLost, time, minRTT, avgRTT, maxRTT, devRTT):
+def writeJson(destination, packetLost, excTime, timeStamp, date, time, minRTT, avgRTT, maxRTT, devRTT):
     return {
         "destination" : destination,
-        "timestamp" : "timestamp",
+        "timeInfo" : 
+            {
+                "timestamp" : timeStamp,
+                "date" : date,
+                "time" : time,
+            },
         "packetLost" : packetLost,
-        "time" : time,
+        "excutionTime" : excTime,
         "RTT" : 
             {
                 "minRTT" : minRTT,
@@ -66,21 +79,37 @@ for i in range(0, dirCount):
     filePath = f"{dir_path}test{str(i)}.txt"
     file = open(filePath, 'r')
     Lines = file.readlines()
-    head, packets, rtt = getLines(Lines)
+    head, packets, rtt, timeStamp = getLines(Lines)
 
-    destination, packetLost, time, minRTT, avgRTT, maxRTT, devRTT = getData(head, packets, rtt)
-    #print("--- new file: " + f"test{str(i)}.txt" +" ---")
+    timeStamp = timeStamp.replace("[","").replace("]","")
+    index = timeStamp.find(".")
+    ts = ""
+    for z in range(0, index):
+        ts += timeStamp[z]
+    timeStamp = int(ts)
+    timeInfo = datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S')
+    date = timeInfo.split(" ")[0]
+    time = timeInfo.split(" ")[1]
+        
+    destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT = getData(head, packets, rtt)
+    print("--- new file: " + f"test{str(i)}.txt" +" ---")
     # print("The target IP is:", destination)
     # print("The time value is:", time)
     # print("Min RTT:", minRTT)
     # print("Avg RTT:", avgRTT)
     # print("Max RTT:", maxRTT)
     # print("Dev RTT:", devRTT)
+    # print("Timestamp:", timeStamp)
+    # print(datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S'))
+    # print("Date:", date)
+    # print("Time:", time)
 
-    results_list.append(writeJson(destination, packetLost, time, minRTT, avgRTT, maxRTT, devRTT))
+    results_list.append(writeJson(destination, packetLost, excTime, timeStamp, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
 with open("sample.txt", "w+") as f:
     f.write(json.dumps(results_list))
+
+print("---")
 
 f = open("sample.txt")
 d = json.load(f)
