@@ -128,5 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Data folder
+# Data
 lab1/resultsPing
+lab1/sample.txt
