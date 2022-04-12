@@ -5,16 +5,13 @@ import re ##to work with regex
 
 # get only three useful lines 
 def getLines(Lines):
-    count = 0
     regTimeStamp = "\[+[0-9]+\.+[0-9]+\]"
     for line in Lines:
         z = re.search(regTimeStamp,line)
-        count += 1
         if "PING" in line.strip():
             head = line.strip()
             continue
         if z:
-            # print(z[0])
             timeStamp = z[0]
             continue
         if "packets" in line.strip():
@@ -41,24 +38,17 @@ def getData(head, packets, rtt):
     devRTT = re.findall(regRTT, rtt)[3]
     return destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT
 
-def writeJson(destination, packetLost, excTime, timeStamp, date, time, minRTT, avgRTT, maxRTT, devRTT):
+def writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT):
     return {
         "destination" : destination,
-        "timeInfo" : 
-            {
-                "timestamp" : timeStamp,
-                "date" : date,
-                "time" : time,
-            },
+        "date" : date,
+        "time" : time,
         "packetLost" : packetLost,
         "excutionTime" : excTime,
-        "RTT" : 
-            {
-                "minRTT" : minRTT,
-                "avgRTT" : avgRTT,
-                "maxRTT" : maxRTT,
-                "devRTT" : devRTT
-            }
+        "minRTT" : minRTT,
+        "avgRTT" : avgRTT,
+        "maxRTT" : maxRTT,
+        "devRTT" : devRTT
     }
 
 os.system("rm sample.txt")
@@ -104,7 +94,7 @@ for i in range(0, dirCount):
     # print("Date:", date)
     # print("Time:", time)
 
-    results_list.append(writeJson(destination, packetLost, excTime, timeStamp, date, time, minRTT, avgRTT, maxRTT, devRTT))
+    results_list.append(writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
 with open("sample.txt", "w+") as f:
     f.write(json.dumps(results_list))
