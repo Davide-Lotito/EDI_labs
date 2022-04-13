@@ -1,16 +1,20 @@
+import json
 import requests
 
+def coordinates(ip):
+    # Your API key, available from your account page
+    YOUR_GEOLOCATION_KEY = open("key.txt","r").read()
 
-def get_location():
-    ip_address = "13.107.42.14"
-    response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
-    location_data = {
-        "ip": ip_address,
-        "city": response.get("city"),
-        "region": response.get("region"),
-        "country": response.get("country_name")
-    }
-    return location_data
+    # IP address to test
+    ip_address = ip
 
+    response = requests.get('https://ipgeolocation.abstractapi.com/v1/?api_key=' + YOUR_GEOLOCATION_KEY + '&ip_address=' + ip_address)
+    latitude = json.loads(response.content)['latitude']
+    longitude = json.loads(response.content)['longitude']
+    return latitude, longitude
 
-print(get_location())
+# Test:
+
+lat, long = coordinates('142.251.209.14')
+print("latitude:", lat)
+print("longitude:", long)
