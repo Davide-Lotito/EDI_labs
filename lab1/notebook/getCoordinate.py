@@ -1,6 +1,8 @@
 import json
 import requests
 
+# https://app.abstractapi.com/users/signup?target=/api/ip-geolocation/pricing/select
+
 def coordinates(ip):
     # Your API key, available from your account page
     YOUR_GEOLOCATION_KEY = open("key.txt","r").read()
@@ -15,6 +17,6 @@ def coordinates(ip):
 
 # Test:
 
-lat, long = coordinates('142.251.209.14')
-print("latitude:", lat)
-print("longitude:", long)
+# lat, long = coordinates('142.251.209.14')
+# print("latitude:", lat)
+# print("longitude:", long)
