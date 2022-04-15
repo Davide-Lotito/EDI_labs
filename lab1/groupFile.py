@@ -1,13 +1,19 @@
-import os ##to use bash command
-
+import os
+import pandas as pd
+from glob import glob
 
 # folder path
 dirPath = './results/'
 
-dirCount = 0
+"""
+https://stackoverflow.com/questions/67996882/creating-pandas-dataframe-from-multiple-json-files
+"""
 
-for path in os.listdir(dirPath):
-    # check if current path is a file
-    if os.path.isfile(os.path.join(dirPath, path)):
-        dirCount += 1
-    print(path)
+def group(dirPath):
+    allFiles = glob(os.path.join(dirPath, "*.txt"))
+    indDf = (pd.read_json(f) for f in allFiles)
+    df = pd.concat(indDf, ignore_index=True)
+    return df
+
+dataframe = group(dirPath)
+print(dataframe)

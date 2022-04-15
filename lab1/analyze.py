@@ -4,7 +4,9 @@ import os # bash command
 import re # regex
 import pytz# time zone
 
-# get only three useful lines 
+"""
+get only three useful lines 
+"""
 def getLines(Lines):
     regTimeStamp = "\[+[0-9]+\.+[0-9]+\]"
     for line in Lines:
@@ -21,7 +23,9 @@ def getLines(Lines):
             rtt = line.strip()
     return head, packets, rtt, timeStamp
 
-# open each file and work on it
+"""
+open each file and work on it
+"""
 def getData(head, packets, rtt):
     # useful regex
     regIP = "[0-9]+\.+[0-9]+\.+[0-9]+\.+[0-9]+"
@@ -39,6 +43,9 @@ def getData(head, packets, rtt):
     devRTT = re.findall(regRTT, rtt)[3]
     return destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT
 
+"""
+write the json file
+"""
 def writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT):
     return {
         "destination" : destination,
@@ -51,6 +58,18 @@ def writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxR
         "maxRTT" : maxRTT,
         "devRTT" : devRTT,
     }
+
+"""
+get the time and date
+"""
+def getTime(timeStamp):
+    timeInfo = datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S')
+    date = timeInfo.split(" ")[0]
+    time = timeInfo.split(" ")[1]
+    timeWrapper = list(time)
+    timeWrapper[1] = str(int(timeWrapper[1]) + 2)
+    time = "".join(timeWrapper)
+    return date,time
 
 # os.system("rm sample.txt")
 
@@ -65,15 +84,6 @@ for path in os.listdir(dirPath):
         dirCount += 1
 
 results_list = []
-
-def getTime(timeStamp):
-    timeInfo = datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S')
-    date = timeInfo.split(" ")[0]
-    time = timeInfo.split(" ")[1]
-    timeWrapper = list(time)
-    timeWrapper[1] = str(int(timeWrapper[1]) + 2)
-    time = "".join(timeWrapper)
-    return date,time
 
 for i in range(0, dirCount):
     filePath = f"{dirPath}test{str(i)}.txt"
@@ -100,8 +110,7 @@ for i in range(0, dirCount):
     # print("Timestamp:", timeStamp)
     # print(datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S'))
     # print("Date:", date)
-    print("Time:", time)
-
+    # print("Time:", time)
     results_list.append(writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
 with open(f"./results/results{timeStamp}.txt", "w+") as f:
