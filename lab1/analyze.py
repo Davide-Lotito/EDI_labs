@@ -48,25 +48,25 @@ def writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxR
         "minRTT" : minRTT,
         "avgRTT" : avgRTT,
         "maxRTT" : maxRTT,
-        "devRTT" : devRTT
+        "devRTT" : devRTT,
     }
 
-os.system("rm sample.txt")
+# os.system("rm sample.txt")
 
 # folder path
-dir_path = './resultsPing/'
+dirPath = './resultsPing/'
 
 dirCount = 0
 # iterate directory
-for path in os.listdir(dir_path):
+for path in os.listdir(dirPath):
     # check if current path is a file
-    if os.path.isfile(os.path.join(dir_path, path)):
+    if os.path.isfile(os.path.join(dirPath, path)):
         dirCount += 1
 
 results_list = []
 
 for i in range(0, dirCount):
-    filePath = f"{dir_path}test{str(i)}.txt"
+    filePath = f"{dirPath}test{str(i)}.txt"
     file = open(filePath, 'r')
     Lines = file.readlines()
     head, packets, rtt, timeStamp = getLines(Lines)
@@ -96,11 +96,11 @@ for i in range(0, dirCount):
 
     results_list.append(writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
-with open("sample.txt", "w+") as f:
+with open(f"./results/results{timeStamp}.txt", "w+") as f:
     f.write(json.dumps(results_list))
 
 print("---")
 
-f = open("sample.txt")
+f = open(f"./results/results{timeStamp}.txt")
 d = json.load(f)
 print(json.dumps(d, indent=4))#prettyprint a json file
