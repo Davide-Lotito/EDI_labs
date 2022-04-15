@@ -1,7 +1,8 @@
 from datetime import datetime
-import json ##to work with json
-import os ##to use bash command
-import re ##to work with regex
+import json # json
+import os # bash command
+import re # regex
+import pytz# time zone
 
 # get only three useful lines 
 def getLines(Lines):
@@ -65,6 +66,15 @@ for path in os.listdir(dirPath):
 
 results_list = []
 
+def getTime(timeStamp):
+    timeInfo = datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S')
+    date = timeInfo.split(" ")[0]
+    time = timeInfo.split(" ")[1]
+    timeWrapper = list(time)
+    timeWrapper[1] = str(int(timeWrapper[1]) + 2)
+    time = "".join(timeWrapper)
+    return date,time
+
 for i in range(0, dirCount):
     filePath = f"{dirPath}test{str(i)}.txt"
     file = open(filePath, 'r')
@@ -77,10 +87,8 @@ for i in range(0, dirCount):
     for z in range(0, index):
         ts += timeStamp[z]
     timeStamp = int(ts)
-    timeInfo = datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S')
-    date = timeInfo.split(" ")[0]
-    time = timeInfo.split(" ")[1]
-        
+    date, time = getTime(timeStamp)
+
     destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT = getData(head, packets, rtt)
     print("--- new file: " + f"test{str(i)}.txt" +" ---")
     # print("The target IP is:", destination)
@@ -92,7 +100,7 @@ for i in range(0, dirCount):
     # print("Timestamp:", timeStamp)
     # print(datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S'))
     # print("Date:", date)
-    # print("Time:", time)
+    print("Time:", time)
 
     results_list.append(writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
