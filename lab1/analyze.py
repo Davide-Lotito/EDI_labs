@@ -100,17 +100,6 @@ for i in range(0, dirCount):
     date, time = getTime(timeStamp)
 
     destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT = getData(head, packets, rtt)
-    print("--- new file: " + f"test{str(i)}.txt" +" ---")
-    # print("The target IP is:", destination)
-    # print("The time value is:", time)
-    # print("Min RTT:", minRTT)
-    # print("Avg RTT:", avgRTT)
-    # print("Max RTT:", maxRTT)
-    # print("Dev RTT:", devRTT)
-    # print("Timestamp:", timeStamp)
-    # print(datetime.utcfromtimestamp(timeStamp).strftime('%Y-%m-%d %H:%M:%S'))
-    # print("Date:", date)
-    # print("Time:", time)
     results_list.append(writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
 with open(f"./results/results{timeStamp}.txt", "w+") as f:
@@ -118,6 +107,10 @@ with open(f"./results/results{timeStamp}.txt", "w+") as f:
 
 print("---")
 
+"""
+# test
+
 f = open(f"./results/results{timeStamp}.txt")
 d = json.load(f)
 print(json.dumps(d, indent=4))#prettyprint a json file
+"""
