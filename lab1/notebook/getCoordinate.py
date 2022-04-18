@@ -17,6 +17,6 @@ def coordinates(ip):
 
 # Test:
 
-# lat, long = coordinates('142.251.209.14')
-# print("latitude:", lat)
-# print("longitude:", long)
+lat, long = coordinates('34.151.215.105')
+print("latitude:", lat)
+print("longitude:", long)
