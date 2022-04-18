@@ -2,7 +2,6 @@ from datetime import datetime
 import json # json
 import os # bash command
 import re # regex
-import pytz# time zone
 
 """
 get only three useful lines 
@@ -13,10 +12,8 @@ def getLines(Lines):
         z = re.search(regTimeStamp,line)
         if "PING" in line.strip():
             head = line.strip()
-            continue
         if z:
             timeStamp = z[0]
-            continue
         if "packets" in line.strip():
             packets = line.strip()
         if "rtt min/avg/max/mdev" in line.strip():
@@ -71,8 +68,6 @@ def getTime(timeStamp):
     time = "".join(timeWrapper)
     return date,time
 
-# os.system("rm sample.txt")
-
 # folder path
 dirPath = './resultsPing/'
 
@@ -89,7 +84,7 @@ for i in range(0, dirCount):
     filePath = f"{dirPath}test{str(i)}.txt"
     file = open(filePath, 'r')
     Lines = file.readlines()
-    head, packets, rtt, timeStamp = getLines(Lines)
+    head, packetsN, rtt, timeStamp = getLines(Lines)
 
     timeStamp = timeStamp.replace("[","").replace("]","")
     index = timeStamp.find(".")
@@ -99,18 +94,13 @@ for i in range(0, dirCount):
     timeStamp = int(ts)
     date, time = getTime(timeStamp)
 
-    destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT = getData(head, packets, rtt)
+    destination, packetLost, excTime, minRTT, avgRTT, maxRTT, devRTT = getData(head, packetsN, rtt)
     results_list.append(writeJson(destination, packetLost, excTime, date, time, minRTT, avgRTT, maxRTT, devRTT))
     
 with open(f"./results/results{timeStamp}.txt", "w+") as f:
     f.write(json.dumps(results_list))
 
-print("---")
-
-"""
-# test
-
-f = open(f"./results/results{timeStamp}.txt")
-d = json.load(f)
-print(json.dumps(d, indent=4))#prettyprint a json file
-"""
+##test
+#f = open(f"./results/results{timeStamp}.txt")
+#d = json.load(f)
+#print(json.dumps(d, indent=4))#prettyprint a json file

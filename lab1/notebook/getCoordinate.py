@@ -15,8 +15,7 @@ def coordinates(ip):
     longitude = json.loads(response.content)['longitude']
     return longitude, latitude
 
-# Test:
-
-lat, long = coordinates('34.151.215.105')
-print("latitude:", lat)
-print("longitude:", long)
+##test
+#lat, long = coordinates('34.151.215.105')
+#print("latitude:", lat)
+#print("longitude:", long)
