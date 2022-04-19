@@ -131,5 +131,6 @@ dmypy.json
 # Data
 lab1/resultsPing
 lab1/results
+lab1/resultsCopy
 lab1/sample.txt
 lab1/notebook/key.txt
