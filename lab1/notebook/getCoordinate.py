@@ -13,6 +13,8 @@ def coordinates(ip):
     response = requests.get('https://ipgeolocation.abstractapi.com/v1/?api_key=' + YOUR_GEOLOCATION_KEY + '&ip_address=' + ip_address)
     latitude = json.loads(response.content)['latitude']
     longitude = json.loads(response.content)['longitude']
+    latitude = int(latitude)
+    longitude = int(longitude)
     return longitude, latitude
 
 ##test
